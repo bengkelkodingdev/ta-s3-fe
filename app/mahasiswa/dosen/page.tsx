@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import DosenPembimbing from "./content";
 import { getPlottingDetail } from "@/lib/api/mahasiswa";
 

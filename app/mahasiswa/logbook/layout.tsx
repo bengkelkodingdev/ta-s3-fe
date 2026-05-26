@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import DashboardHeader from "@/components/dashboard-header";
 import { getServerSession } from "next-auth";
