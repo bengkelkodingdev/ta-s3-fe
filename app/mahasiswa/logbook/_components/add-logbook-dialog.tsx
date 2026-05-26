@@ -27,11 +27,19 @@ import { Input } from "@/components/ui/input";
 import { PlusIcon } from "lucide-react";
 import { toast } from "sonner"; // Impor toast dari sonner
 import { createLogbook } from "@/lib/api/logbook";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Schema for validation
 const logbookSchema = z.object({
   deskripsi: z.string().min(10, "Deskripsi minimal 10 karakter"),
   dokumen: z.string().url("Link dokumen harus berupa URL yang valid"),
+  jurnalTipe: z.enum(["jurnal1", "jurnal2"]).optional(),
 });
 
 export default function AddLogbookDialog({
@@ -47,6 +55,7 @@ export default function AddLogbookDialog({
     defaultValues: {
       deskripsi: "",
       dokumen: "",
+      jurnalTipe: "jurnal1",
     },
   });
 
@@ -54,7 +63,9 @@ export default function AddLogbookDialog({
     setIsSubmitting(true);
 
     try {
-      await createLogbook(type, values);
+      const effectiveType =
+        type === "jurnal" ? (values.jurnalTipe ?? "jurnal1") : type;
+      await createLogbook(effectiveType, values);
 
       toast.success(`Logbook ${type} berhasil dibuat`, {
         description: "Berhasil",
@@ -66,7 +77,7 @@ export default function AddLogbookDialog({
       toast.error(
         error instanceof Error
           ? error.message
-          : "Terjadi kesalahan saat memperbarui status logbook"
+          : "Terjadi kesalahan saat memperbarui status logbook",
       );
     } finally {
       setIsSubmitting(false);
@@ -122,6 +133,33 @@ export default function AddLogbookDialog({
                 </FormItem>
               )}
             />
+
+            {type === "jurnal" && (
+              <FormField
+                control={form.control}
+                name="jurnalTipe"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipe Jurnal</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih tipe jurnal" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="jurnal1">Jurnal 1</SelectItem>
+                        <SelectItem value="jurnal2">Jurnal 2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <DialogFooter>
               <Button type="submit" disabled={isSubmitting}>

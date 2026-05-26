@@ -174,8 +174,8 @@ export default function PengajuanList({
 
   return (
     <div className="space-y-4">
-      {pengajuanItems.map((item) => (
-        <PengajuanItemCard key={item.id} item={item} />
+      {pengajuanItems.map((item, idx) => (
+        <PengajuanItemCard key={item.id ?? idx} item={item} />
       ))}
     </div>
   );
